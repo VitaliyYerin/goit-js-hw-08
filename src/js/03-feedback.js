@@ -1,19 +1,17 @@
 import throttle from "lodash.throttle";
 
-const refs = {
-  form: document.querySelector('.feedback-form')
-}
+const form = document.querySelector('.feedback-form');
 const FORM_STORAGE_KEY = 'feedback-form-state';
-const formData = {};
+const formEl = {};
 
 populateFormInput();
 
-refs.form.addEventListener('submit', onFormSubmit);
-refs.form.addEventListener('input', throttle(addFormInput, 500));
+form.addEventListener('submit', onFormSubmit);
+form.addEventListener('input', throttle(addFormInput, 500));
 
 function addFormInput(e) {
-  formData[e.target.name] = e.target.value;
-  sessionStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formData));
+  formEl[e.target.name] = e.target.value;
+  localStorage.setItem(FORM_STORAGE_KEY, JSON.stringify(formEl));
 }
 
 function onFormSubmit(e) {
@@ -22,19 +20,19 @@ function onFormSubmit(e) {
   if (email.value === '' || message.value === '') {
     return alert('Fill in all fields please')
   }
-  console.log(formData);
+  console.log(formEl);
   e.currentTarget.reset();
-  sessionStorage.removeItem(FORM_STORAGE_KEY);
+  localStorage.removeItem(FORM_STORAGE_KEY);
 }
 
 function populateFormInput() {
-  const formStringValue = sessionStorage.getItem(FORM_STORAGE_KEY);
+  const formStringValue = localStorage.getItem(FORM_STORAGE_KEY);
   if (formStringValue) {
     const formObjectValue = JSON.parse(formStringValue);
     for (const key in formObjectValue) {
-      formData[key] = formObjectValue[key];
+      formEl[key] = formObjectValue[key];
     }
-    refs.form.elements.email.value = formData.email ? formData['email'] : '';
-    refs.form.elements.message.value = formData.message ? formData['message'] : '';
+    form.elements.email.value = formEl.email ? formEl['email'] : '';
+    form.elements.message.value = formEl.message ? formEl['message'] : '';
   }
 }
